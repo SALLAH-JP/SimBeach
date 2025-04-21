@@ -5,16 +5,14 @@ CONFIG_FILE = "variables/config.json"
 
 default_config = {
     "nb_dechets": 10,
-    "largeur_plage": 50,
-    "longueur_plage": 100,
-    "taux_recyclage": 25,
-    "vitesse_simulation": 1.0,
-    "mode_avance": False,
+    "largeur_plage": 400,
+    "niveau_maree": 1,
+    "vitesse_simulation": 1,
     "ip": "192.168.0.1",
-    "port": "COM3",
+    "port_usb": "COM3",
+    "port_wifi": 8080,
     "robot_connect": False
 }
-
 def load_config():
 
     if os.path.exists(CONFIG_FILE):

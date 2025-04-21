@@ -8,6 +8,7 @@
             size_hint_y: 0.1125
             padding: dp(5)
             spacing: dp(10)
+
             canvas.before:
                 Color:
                     rgba: 0.2, 0.2, 0.2, 1
@@ -33,23 +34,28 @@
                 text: "Vies: 3"
                 font_size: '20sp'
 
-            Spinner:
-                id: level_spinner
-                text: "Niveau 1"
-                values: ["Niveau 1", "Niveau 2", "Niveau 3"]
-                size_hint: (None, None)
-                size: dp(120), dp(40)
+
+            ButtonIcon:
+                id: bouton
+                icon_source: "assets/icones/icone_start.png"
+                text: ""
+                size_hint: (0.3, 0.8)
                 pos_hint: {"center_y": 0.5}
-                # Lorsqu'on change le choix, on lance le chargement du niveau
-                on_text: root.jeu_widget.load_level(self.text)
+                icon_pos: self.center_x - dp(16), self.center_y - dp(16)
+                on_release: root.jeu_widget.load_level()
 
 
-        BoxLayout:
-            canvas.before:
-                Rectangle:
-                    source: "assets/backgrounds/plage.jpg"
-                    pos: self.pos
-                    size: self.size
+        FloatLayout:
+            Video:
+                id: background
+                source: f"assets/backgrounds/plage{app.config['niveau_maree']}.mp4"
+                state: "play"
+                options: {'eos': 'loop'}
+                allow_stretch: True
+                keep_ratio: False
+                size : self.size
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
 
-            Widget:
+
+            DimmingWidget:
                 id: jeu_widget

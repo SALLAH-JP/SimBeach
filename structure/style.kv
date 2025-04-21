@@ -3,6 +3,8 @@
 #:import Window kivy.core.window.Window
 #:import ButtonIcon ecrans.classe
 #:import DimmingWidget ecrans.classe
+#:import load_config variables.config_manager
+
 
 
 
@@ -40,6 +42,10 @@
 
 # Style global pour les BoxLayout (espacement et marges par défaut)
 <BoxLayout>:
+    spacing: dp(10)
+    padding: dp(10)
+
+<FloatLayout>:
     spacing: dp(10)
     padding: dp(10)
     
@@ -164,5 +170,5 @@
             Color:
                 rgba: 0, 0, 0, root.dim_opacity  # Assombrissement contrôlé par dim_opacity
             Rectangle:
-                pos: (root.pos[0] - 15, root.pos[1] - 15)
-                size: (root.size[0] + 30, root.size[1] + 30)
+                pos: (root.pos[0] + 15, root.pos[1] + 15)
+                size: (root.size[0], root.size[1])

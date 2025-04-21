@@ -26,9 +26,9 @@
                 on_release: app.root.current = "accueil"
 
             Label:
-                id: score_label
-                text: "Score: 0/10"
-                font_size: '20sp'
+                id: label
+
+
 
             MyButton:
                 id: bouton_waste
@@ -63,12 +63,17 @@
                 on_release: root.simulation_widget.stop_simulation()
 
 
-        BoxLayout:
-            canvas.before:
-                Rectangle:
-                    source: "assets/backgrounds/plage.jpg"
-                    pos: self.pos
-                    size: self.size
+        FloatLayout:
+            Video:
+                id: background
+                source: f"assets/backgrounds/plage{app.config['niveau_maree']}.mp4"
+                state: "play"
+                options: {'eos': 'loop'}
+                allow_stretch: True
+                keep_ratio: False
+                size : self.size
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+
 
             DimmingWidget:
                 id: simulation_widget

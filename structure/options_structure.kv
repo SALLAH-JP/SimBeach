@@ -41,35 +41,15 @@
                         halign: "right"
                     TextInput:
                         id: nb_dechets
-                        font_size: root.height * 0.03
 
                     # Champ pour la largeur de la plage
                     Label:
-                        text: "Largeur de la plage (m) :"
+                        text: "Largeur de la plage (%) :"
                         font_size: '20sp'
                         halign: "right"
                     TextInput:
                         id: largeur_plage
-                        font_size: root.height * 0.03
-
-                    # Champ pour la longueur de la plage
-                    Label:
-                        text: "Longueur de la plage (m) :"
-                        font_size: '20sp'
-                        halign: "right"
-                    TextInput:
-                        id: longueur_plage
-                        font_size: root.height * 0.03
-
-                    # Champ supplémentaire : Taux de recyclage
-                    Label:
-                        text: "Taux de recyclage (%) :"
-                        font_size: '20sp'
-                        halign: "right"
-                    TextInput:
-                        id: taux_recyclage
-                        font_size: root.height * 0.03
-
+                        
                     # Champ supplémentaire : Vitesse de simulation
                     Label:
                         text: "Vitesse de simulation :"
@@ -77,15 +57,38 @@
                         halign: "right"
                     TextInput:
                         id: vitesse_simulation
-                        font_size: root.height * 0.03
 
-                    # Exemple d'un paramètre sous forme de switch (activer/désactiver un mode)
                     Label:
-                        text: "Mode avancé :"
+                        text: "Autre :"
                         font_size: '20sp'
                         halign: "right"
-                    Switch:
-                        id: mode_avance
+                    TextInput:
+                        id: autre
+
+                    Label:
+                        text: "Autre :"
+                        font_size: '20sp'
+                        halign: "right"
+                    TextInput:
+                        id: autre
+                        
+                    Label:
+                        text: "Autre :"
+                        font_size: '20sp'
+                        halign: "right"
+                    TextInput:
+                        id: autre
+
+                    Label:
+                        text: "Niveau de la Marée :"
+                        font_size: '20sp'
+                        halign: "right"
+                    Slider:
+                        id: niveau_maree
+                        min: 0
+                        max: 3
+                        value: 1
+                        step: 1
 
                     Label:
                         id: error_label
@@ -105,10 +108,10 @@
                         icon_source: "assets/icones/icone_home.png"
                         size_hint: (0.1, 0.8)
                         text: "Retour à l'accueil"
-                        on_press: app.root.current = "accueil"
+                        on_release: app.root.current = "accueil"
                     ButtonIcon:
                         icon_source: "assets/icones/icone_save.png"
                         text: "Enregistrer les paramètres"
                         size_hint: (0.1, 0.8)
-                        on_press: root.options_widget.enregistrer_parametres()
+                        on_release: root.options_widget.enregistrer_parametres()
                     

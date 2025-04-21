@@ -1,3 +1,4 @@
+from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.screenmanager import Screen
 from kivy.animation import Animation
@@ -13,23 +14,19 @@ class OptionsWidget(Widget):
 
         self.parent.ids.nb_dechets.text = ""
         self.parent.ids.largeur_plage.text = ""
-        self.parent.ids.longueur_plage.text = ""
-        self.parent.ids.taux_recyclage.text = ""
         self.parent.ids.vitesse_simulation.text = ""
 
         self.parent.ids.nb_dechets.hint_text = str( config.get("nb_dechets", "") )
         self.parent.ids.largeur_plage.hint_text = str( config.get("largeur_plage", "") )
-        self.parent.ids.longueur_plage.hint_text = str( config.get("longueur_plage", "") )
-        self.parent.ids.taux_recyclage.hint_text = str( config.get("taux_recyclage", "") )
         self.parent.ids.vitesse_simulation.hint_text = str( config.get("vitesse_simulation", "") )
-        self.parent.ids.mode_avance.active = config.get("mode_avance", False)
+        self.parent.ids.niveau_maree.value = config.get("niveau_maree", 1)
 
 
     def enregistrer_parametres(self):
         config = load_config()
         
         try:
-            for index in ["nb_dechets", "largeur_plage", "longueur_plage", "taux_recyclage", "vitesse_simulation"]:
+            for index in ["nb_dechets", "largeur_plage", "vitesse_simulation"]:
                 value = self.parent.ids[index].text
                 
                 if value == "": value = config[index]
@@ -46,15 +43,19 @@ class OptionsWidget(Widget):
             self.show_temporary_message(str(e), (1, 0, 0, 1))
             return
 
-        for index in ["nb_dechets", "largeur_plage", "longueur_plage", "taux_recyclage", "vitesse_simulation"]:
+        for index in ["nb_dechets", "largeur_plage", "vitesse_simulation"]:
             value = self.parent.ids[index].text
             if value == "": value = config[index]
 
-            if index == "nb_dechets" and int(value) > 200: value = 200
+            if index == "nb_dechets" and int(value) > 1000: value = 1000
+            if index == "largeur_plage" and int(value) > 100: value = 100
             
             modify_variable(index, int(value))
+        modify_variable("niveau_maree", int(self.parent.ids["niveau_maree"].value))
 
-        modify_variable("mode_avance", self.parent.ids.mode_avance.active)
+        if not config["niveau_maree"] == int(self.parent.ids["niveau_maree"].value):
+            App.get_running_app().root.get_screen('simulation').ids.background.source = f"assets/backgrounds/plage{int(self.parent.ids["niveau_maree"].value)}.mp4"
+
         self.on_pre_enter()
         self.show_temporary_message("Les paramètres ont été enregistrer avec succès.", (0, 1, 0, 1))
 
@@ -67,7 +68,7 @@ class OptionsWidget(Widget):
         label.color = couleur
 
         # Animation pour rendre le message visible et disparaître
-        anim = Animation(opacity=1, duration=2) + Animation(opacity=0, duration=5)
+        anim = Animation(opacity=1, duration=1) + Animation(opacity=0, duration=2)
         anim.start(label)
 
 

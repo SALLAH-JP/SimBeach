@@ -1,10 +1,8 @@
 {
-    "nb_dechets": 10,
-    "largeur_plage": 50,
-    "longueur_plage": 100,
-    "taux_recyclage": 25,
+    "nb_dechets": 100,
+    "largeur_plage": 100,
+    "niveau_maree": 3,
     "vitesse_simulation": 100,
-    "mode_avance": false,
     "ip": "192.168.0.1",
     "port_usb": "COM3",
     "port_wifi": 8080,
