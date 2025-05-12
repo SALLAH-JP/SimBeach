@@ -5,14 +5,16 @@ CONFIG_FILE = "variables/config.json"
 
 default_config = {
     "nb_dechets": 10,
-    "largeur_plage": 400,
+    "largeur_plage": 100,
     "niveau_maree": 1,
     "vitesse_simulation": 1,
+    "best_score": 0,
     "ip": "192.168.0.1",
     "port_usb": "COM3",
     "port_wifi": 8080,
     "robot_connect": False
 }
+
 def load_config():
 
     if os.path.exists(CONFIG_FILE):
@@ -21,9 +23,9 @@ def load_config():
                 config = json.load(f)
                 return config
         except Exception as e:
-            print("Erreur lors du chargement, utilisation de la config par défaut :", e)
             return default_config.copy()
     else:
+        os.makedirs("variables")
         save_config(default_config)
         return default_config.copy()
 
@@ -40,5 +42,3 @@ def modify_variable(variable, value):
         config[variable] = value
         save_config(config)
 
-    else:
-        print(f"Erreur : Variable '{variable}' introuvable.")

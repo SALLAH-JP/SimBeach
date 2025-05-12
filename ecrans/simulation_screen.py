@@ -3,9 +3,10 @@ import math
 import time
 import cv2
 import numpy as np
+import importlib.util
+from PyQt5.QtWidgets import QApplication, QFileDialog
 from variables.config_manager import *
 from ecrans.classe import colors_are_close
-from ffpyplayer.player import MediaPlayer
 from kivy.animation import Animation
 from kivy.uix.screenmanager import Screen
 from kivy.uix.widget import Widget
@@ -34,7 +35,6 @@ class SimulationWidget(Widget):
         self.largeur = config["largeur_plage"] / 100
 
         video = cv2.VideoCapture(f"assets/backgrounds/plage{config["niveau_maree"]}.mp4")
-        print(f"assets/backgrounds/plage{config["niveau_maree"]}.mp4")
         self.frames = []
         self.fps = int(video.get(cv2.CAP_PROP_FPS))  # Récupérer les FPS
 
@@ -46,7 +46,6 @@ class SimulationWidget(Widget):
             self.frames.append(frame)
 
         video.release()
-        print(len(self.frames))
 
     def on_touch_down(self, touch):
         super().on_touch_down(touch)
@@ -61,9 +60,9 @@ class SimulationWidget(Widget):
 
                 Color(1, 1, 1, 1)
                 self.robot = Rectangle(
-                    source="assets/robot/robot.jpg",
+                    source="assets/robot/robot.png",
                     pos=(15, 15),
-                    size=(50, 50)
+                    size=(60, 60)
                 )
 
             self.robot_ratio = ( 15/self.parent.ids.simulation_widget.width, 15/self.parent.ids.simulation_widget.height )
@@ -134,6 +133,25 @@ class SimulationWidget(Widget):
             dechet.pos = (pos_x, pos_y)
             index += 1
 
+    def supp_dechets(self):
+
+        x, y = self.robot.pos
+        robot_width, robot_height = self.robot.size
+
+        # Vérifier la collision avec chacun des déchets
+        for dechet in self.dechets[:]:
+            dechet_x, dechet_y = dechet.pos
+            dechet_width, dechet_height = dechet.size
+            
+            # Vérifie si le robot est au-dessus du déchet
+            if (x < dechet_x + dechet_width and
+                x + robot_width > dechet_x and
+                y < dechet_y + dechet_height and
+                y + robot_height > dechet_y):
+
+                self.parent.ids.simulation_widget.canvas.remove(dechet)
+                self.dechets.remove(dechet)
+
     def dans_leau(self):
         indice = min(int(self.parent.ids.background.position * self.fps), len(self.frames) - 1)
         frame = self.frames[indice]
@@ -146,7 +164,6 @@ class SimulationWidget(Widget):
         if 0 <= x < w and 0 <= y < h:
             frame_array = np.array(frame)  # Convertir en tableau NumPy rapide
             pixel = frame_array[y, x]  # Accès optimisé
-            print(pixel)
             if pixel[0] < 80 and pixel[1] > 200 and pixel[1] < 210 and pixel[2] > 240:
                 self.etanche = False
                 self.show_temporary_message("Le robot est dans la mer", (1, 0, 0, 1), 1)
@@ -171,25 +188,11 @@ class SimulationWidget(Widget):
                 # Inverser la direction
                 self.direction *= -1
 
+            self.supp_dechets()
             
             self.robot.pos = (x, y)
             self.robot_ratio = (x / self.parent.ids.simulation_widget.width, y / self.parent.ids.simulation_widget.height)
             self.dans_leau()
-            robot_width, robot_height = self.robot.size
-
-            # Vérifier la collision avec chacun des déchets
-            for dechet in self.dechets[:]:
-                dechet_x, dechet_y = dechet.pos
-                dechet_width, dechet_height = dechet.size
-                
-                # Vérifie si le robot est au-dessus du déchet
-                if (x < dechet_x + dechet_width and
-                    x + robot_width > dechet_x and
-                    y < dechet_y + dechet_height and
-                    y + robot_height > dechet_y):
-
-                    self.parent.ids.simulation_widget.canvas.remove(dechet)
-                    self.dechets.remove(dechet)
     
 
             # Si le robot atteint le haut de la zone de jeu, arrêter le parcours
@@ -266,18 +269,7 @@ class SimulationWidget(Widget):
             if (x, y) == cible:
                 self.index += 1
 
-            robot_width, robot_height = self.robot.size
-            for dechet in self.dechets[:]:
-                dechet_x, dechet_y = dechet.pos
-                dechet_width, dechet_height = dechet.size
-
-                if (x < dechet_x + dechet_width and
-                    x + robot_width > dechet_x and
-                    y < dechet_y + dechet_height and
-                    y + robot_height > dechet_y):
-
-                    self.parent.ids.simulation_widget.canvas.remove(dechet)
-                    self.dechets.remove(dechet)
+            self.supp_dechets()
 
 
         elif self.choix == "Parcours Spirale":
@@ -314,18 +306,7 @@ class SimulationWidget(Widget):
             self.robot_ratio = (x / self.parent.ids.simulation_widget.width, y / self.parent.ids.simulation_widget.height)
             self.dans_leau()
 
-            robot_width, robot_height = self.robot.size
-            for dechet in self.dechets[:]:
-                dechet_x, dechet_y = dechet.pos
-                dechet_width, dechet_height = dechet.size
-                
-                if (x < dechet_x + dechet_width and
-                    x + robot_width > dechet_x and
-                    y < dechet_y + dechet_height and
-                    y + robot_height > dechet_y):
-
-                    self.parent.ids.simulation_widget.canvas.remove(dechet)
-                    self.dechets.remove(dechet)
+            self.supp_dechets()
 
             if y == (self.parent.ids.simulation_widget.height * self.largeur - 35) and x == 15:
                 self.stop_simulation()
@@ -334,6 +315,43 @@ class SimulationWidget(Widget):
                 else:
                     self.show_temporary_message("Échec de la simulation : Robot noyé.", (1, 0, 0, 1), 1)
 
+        elif self.choix == "Parcours Perso":
+            try:
+                self.module_utilisateur.main(self.robot)
+            except Exception as e:
+                self.stop_simulation()
+                self.show_temporary_message("Erreur dans le main.", (1, 0, 0, 1), 1)
+
+            x, y = self.robot.pos
+            x = max(15, min(x, self.parent.ids.simulation_widget.width - 30))
+            y = max(15, min(y, self.parent.ids.simulation_widget.height * self.largeur - 35))
+            self.robot.pos = (x, y)
+
+            self.dans_leau()
+            self.supp_dechets()
+
+            if y == (self.parent.ids.simulation_widget.height * self.largeur - 35) and x == 15:
+                self.stop_simulation()
+                if self.etanche:
+                    self.show_temporary_message("Simulation terminée avec succès.", (0, 1, 0, 1), 1)
+                else:
+                    self.show_temporary_message("Échec de la simulation : Robot noyé.", (1, 0, 0, 1), 1)
+
+    def ouvrir_explorateur_qt(self):
+        app = QApplication([])
+        chemin_fichier, _ = QFileDialog.getOpenFileName(
+            None, "Choisir un fichier", "", "Fichiers Python (*.py)"
+        )
+        
+        if chemin_fichier:
+            return chemin_fichier
+
+
+    def charger_et_executer(self, chemin_fichier):
+        """ Charge dynamiquement le fichier et exécute une fonction spécifique. """
+        spec = importlib.util.spec_from_file_location("module_utilisateur", chemin_fichier)
+        self.module_utilisateur = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.module_utilisateur)
 
     def calculer_distances(self):
         n = len(self.dechets)
@@ -444,13 +462,17 @@ class SimulationWidget(Widget):
                     self.generate_hilbert_path()
 
                 elif self.choix == "Parcours Spirale":
-                    self.robot.pos = (zone_width / 2, (self.parent.ids.simulation_widget.height * self.largeur - 35) / 2)
+                    self.robot.pos = (self.parent.ids.simulation_widget.width / 2, (self.parent.ids.simulation_widget.height * self.largeur - 35) / 2)
                     self.robot_ratio = (self.robot.pos[0] / self.parent.ids.simulation_widget.width, self.robot.pos[1] / self.parent.ids.simulation_widget.height)
                     # Initialisation de l'état de la spirale
                     self.spiral_direction = 0
                     self.spiral_segment_length = 50
                     self.spiral_current_count = 0
                     self.spiral_turn_count = 0
+
+                elif self.choix == "Parcours Perso":
+                    chemin = self.ouvrir_explorateur_qt()
+                    if not chemin == None: self.charger_et_executer(chemin)
                 
                 config = load_config()
                 vitesse = config["vitesse_simulation"]
@@ -464,7 +486,7 @@ class SimulationWidget(Widget):
                     vitesse = config["vitesse_simulation"]
                     Clock.schedule_interval(self.update, 0.1 / vitesse)
         else:
-            self.show_temporary_message("La plage est déjà propre.", (1, 0, 0, 1), 1)
+            self.show_temporary_message("La plage est déjà propre.", (0, 1, 0, 1), 1)
 
 
     def stop_simulation(self):

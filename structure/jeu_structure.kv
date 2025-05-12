@@ -26,14 +26,13 @@
                 on_release: app.root.current = "accueil"
 
             Label:
-                id: score_label
-                text: "Score: 0/10"
+                id: score
+                text: "Score: 0"
                 font_size: '20sp'
             Label:
-                id: life_label
-                text: "Vies: 3"
+                id: best_score
+                text: f"Meilleur Score: {app.config['best_score']}"
                 font_size: '20sp'
-
 
             ButtonIcon:
                 id: bouton
@@ -48,7 +47,7 @@
         FloatLayout:
             Video:
                 id: background
-                source: f"assets/backgrounds/plage{app.config['niveau_maree']}.mp4"
+                source: "assets/backgrounds/plage3.mp4"
                 state: "play"
                 options: {'eos': 'loop'}
                 allow_stretch: True
@@ -59,3 +58,9 @@
 
             DimmingWidget:
                 id: jeu_widget
+                Label:
+                    id: game_over
+                    text:""
+                    font_size:"50sp"
+                    size:(300, 100)
+                    pos:self.parent.center_x - 125, self.parent.center_y

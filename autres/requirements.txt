@@ -1,4 +1,4 @@
 kivy
-pyserial
 ffpyplayer
 numpy
+PyQt5
