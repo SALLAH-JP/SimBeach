@@ -25,7 +25,6 @@ def load_config():
         except Exception as e:
             return default_config.copy()
     else:
-        os.makedirs("variables")
         save_config(default_config)
         return default_config.copy()
 

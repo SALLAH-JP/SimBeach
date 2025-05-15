@@ -1,7 +1,7 @@
 {
-    "nb_dechets": 10,
+    "nb_dechets": 30,
     "largeur_plage": 100,
-    "niveau_maree": 2,
+    "niveau_maree": 0,
     "vitesse_simulation": 1,
     "best_score": 9,
     "ip": "192.168.0.1",

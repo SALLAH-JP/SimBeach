@@ -1,10 +1,9 @@
 from kivy.config import Config
-from kivy.core.window import Window
-#Config.set('graphics', 'window_state', 'hidden')
-#Config.set('graphics', 'window_state', 'visible')
 Config.set('graphics', 'minimum_width', '600')
 Config.set('graphics', 'minimum_height', '450')
 #Config.set('graphics', 'resizable', '0')  # 0 pour désactiver, 1 pour autoriser
+
+from kivy.core.window import Window
 Window.set_icon("assets/robot/robot.jpg")
 
 from variables.config_manager import *

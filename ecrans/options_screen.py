@@ -51,6 +51,7 @@ class OptionsWidget(Widget):
             if index == "largeur_plage" and int(value) > 100: value = 100
             
             modify_variable(index, int(value))
+
         modify_variable("niveau_maree", int(self.parent.ids["niveau_maree"].value))
 
         if not config["niveau_maree"] == int(self.parent.ids["niveau_maree"].value):

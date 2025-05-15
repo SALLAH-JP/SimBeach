@@ -140,14 +140,14 @@ class SimulationWidget(Widget):
 
         # Vérifier la collision avec chacun des déchets
         for dechet in self.dechets[:]:
-            dechet_x, dechet_y = dechet.pos
             dechet_width, dechet_height = dechet.size
+            dechet_x, dechet_y = dechet.pos[0] + dechet_width / 2, dechet.pos[1] + dechet_height / 2
             
             # Vérifie si le robot est au-dessus du déchet
-            if (x < dechet_x + dechet_width and
-                x + robot_width > dechet_x and
-                y < dechet_y + dechet_height and
-                y + robot_height > dechet_y):
+            if (dechet_x > x and
+                dechet_x < x + robot_width and
+                dechet_y > y and
+                dechet_y < y + robot_height):
 
                 self.parent.ids.simulation_widget.canvas.remove(dechet)
                 self.dechets.remove(dechet)
@@ -330,7 +330,7 @@ class SimulationWidget(Widget):
             self.dans_leau()
             self.supp_dechets()
 
-            if y == (self.parent.ids.simulation_widget.height * self.largeur - 35) and x == 15:
+            if y == (self.parent.ids.simulation_widget.height * self.largeur - 35) and x == (self.parent.ids.simulation_widget.width - 30):
                 self.stop_simulation()
                 if self.etanche:
                     self.show_temporary_message("Simulation terminée avec succès.", (0, 1, 0, 1), 1)
@@ -365,18 +365,33 @@ class SimulationWidget(Widget):
         return distances
 
     # Résoudre le TSP avec l'algorithme du plus proche voisin
-    def plus_proche_voisin(self, start, distances):
-        chemin = [start]
+    def plus_proche_voisin(self, distances):
+        chemin = []
         non_visites = list( range( len(self.dechets) ) )
+
+        # Choisir le déchet le plus proche de la position de départ du robot
+        start = min(
+            non_visites, 
+            key=lambda i: math.sqrt(
+                (self.robot.pos[0] - self.dechets[i].pos[0])**2 + 
+                (self.robot.pos[1] - self.dechets[i].pos[1])**2
+            )
+        )
+
+        chemin.append(start)
         non_visites.remove(start)
+        current = start
+
+
 
         while non_visites:
-            dernier_point = chemin[-1]
-            prochain_point = min(non_visites, key=lambda point: distances[dernier_point][point])
+            prochain_point = min(non_visites, key=lambda i: distances[current][i])
             chemin.append(prochain_point)
             non_visites.remove(prochain_point)
-
+            current = prochain_point
+    
         return chemin
+
         
     def hilbert_index_to_xy(self, n, d):
         """
@@ -452,7 +467,7 @@ class SimulationWidget(Widget):
 
                 elif self.choix == "Parcours PPV":
                     distances = self.calculer_distances()
-                    self.chemin = self.plus_proche_voisin(0, distances)
+                    self.chemin = self.plus_proche_voisin(distances)
                     self.index = 0
                     self.dechets_copie = self.dechets[:]
 
