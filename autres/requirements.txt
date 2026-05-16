@@ -1,4 +1,0 @@
-kivy
-ffpyplayer
-numpy
-PyQt5
