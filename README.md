@@ -14,19 +14,9 @@
 [![OpenCV](https://img.shields.io/badge/Vision-OpenCV-5C3EE8?logo=opencv&logoColor=white)](https://opencv.org/)
 [![Arduino](https://img.shields.io/badge/Arduino-USB%20%2F%20Wi--Fi-00979D?logo=arduino&logoColor=white)](https://www.arduino.cc/)
 
-[**🎥 Démo**](#-démonstration) · [**🚀 Installation**](#-installation) · [**🧮 Algorithmes**](#-algorithmes-de-parcours)
+[**🚀 Installation**](#-installation) · [**🧮 Algorithmes**](#-algorithmes-de-parcours)
 
 </div>
-
----
-
-## 📺 Démonstration
-
-> 🎬 **[▶️ Cliquez ici pour voir SimBeach en action sur YouTube](https://youtu.be/REMPLACER_PAR_LIEN_YOUTUBE)**
-
-[![SimBeach Demo](https://img.youtube.com/vi/REMPLACER_PAR_LIEN_YOUTUBE/maxresdefault.jpg)](https://youtu.be/REMPLACER_PAR_LIEN_YOUTUBE)
-
-*Comparaison des 5 algorithmes de parcours sur une plage simulée, et démonstration du mode jeu interactif.*
 
 ---
 
